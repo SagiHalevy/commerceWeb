@@ -6,12 +6,18 @@ class User(AbstractUser):
     pass
 
 
+
+def user_directory_path(instance,filename):
+    return f'auction_images/user_{instance.seller.id}/{filename}'
+
 class AuctionList(models.Model):
     seller = models.ForeignKey('User', on_delete=models.CASCADE, related_name = "lists")
     productName = models.CharField(max_length=64)
     initialPrice = models.DecimalField(max_digits=30, decimal_places=2)
     info = models.TextField(max_length=1000)
     creationTime = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to= user_directory_path, blank=True, null=True)
+
 
 
 class Bid(models.Model):

@@ -4,10 +4,16 @@
 
     <h2>Active Listings</h2>
     {% for auctionList in auctionLists %}
-    <div class="list-group mb-5"> <!-- Added "mb-3" class for margin-bottom -->
-        <h3 class="list-group-item list-group-item-action active"><b>Product:</b> {{auctionList.productName}}</h3>
-        <p class="list-group-item list-group-item-action"><b>Price:</b> {{ auctionList.initialPrice }}</p>
-        <p class="list-group-item list-group-item-action"><b>Listed By:</b> {{auctionList.seller}} at {{ auctionList.creationTime }}</p>
+    <div class="auctionProduct">
+        <h3><b>Product:</b> {{auctionList.productName}} </h3>
+        <small><b>Price</b> {{ auctionList.initialPrice }}</small> <br>
+        <small><b>Listed By:</b> {{auctionList.seller}} at {{ auctionList.creationTime }}</small>
+
+        {% if auctionList.image %}
+            <img src="{{ auctionList.image.url }}" alt="{{ auctionList.productName }}" style="max-width: 200px;">
+        {% endif %}
+
+        <br><br><br>
     </div>
     {%empty%}
         <p>No active listings.</p>

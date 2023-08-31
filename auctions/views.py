@@ -15,6 +15,8 @@ class CreateListingForm(forms.Form):
         widget=forms.Textarea(attrs={'rows': 15, 'cols':100})
     )
     price = forms.DecimalField(label="Starting Price:",min_value=0,  max_digits=30, decimal_places=2)
+    image = forms.ImageField(label="Upload Image:", required=False)
+
 
 def index(request):
     return render(request, "auctions/index.html",{
@@ -24,13 +26,14 @@ def index(request):
 
 def createListing(request):
     if request.method == 'POST':
-        form = CreateListingForm(request.POST)
+        form = CreateListingForm(request.POST, request.FILES)
         if form.is_valid():
             title = form.cleaned_data['title']
             description = form.cleaned_data['info']
             price = form.cleaned_data['price']
-
-            auctionList = AuctionList(seller=request.user ,productName=title, initialPrice=price, info=description)
+            image = form.cleaned_data['image']
+            auctionList = AuctionList(seller=request.user ,productName=title,
+                                      initialPrice=price, info=description, image=image)
             auctionList.save()
             return HttpResponseRedirect(reverse("index"))
 

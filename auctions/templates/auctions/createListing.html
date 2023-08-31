@@ -2,7 +2,7 @@
 
 {% block body %}
 
-<form method="post">
+<form method="post" , enctype="multipart/form-data">
     {% csrf_token %}
     <label for="{{ form.title.id_for_label }}">{{form.title.label}}</label>
     {{ form.title }}
@@ -13,6 +13,8 @@
     <br>
     <label for="{{ form.price.id_for_label }}">{{form.price.label}}</label>
     {{ form.price }}
+    <br><br>
+    {{ form.image  }}
     <br><br>
     <input type="submit" value="Create Listing">
 </form>
