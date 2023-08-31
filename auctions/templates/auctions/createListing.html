@@ -1,0 +1,20 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<form method="post">
+    {% csrf_token %}
+    <label for="{{ form.title.id_for_label }}">{{form.title.label}}</label>
+    {{ form.title }}
+    <br>
+    <label for="{{ form.markdown_content.id_for_label }}">{{form.info.label}}</label>
+    <br>
+    {{ form.info }}    
+    <br>
+    <label for="{{ form.price.id_for_label }}">{{form.price.label}}</label>
+    {{ form.price }}
+    <br><br>
+    <input type="submit" value="Create Listing">
+</form>
+
+{% endblock %}

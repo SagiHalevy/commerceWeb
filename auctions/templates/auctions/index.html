@@ -1,0 +1,16 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <h2>Active Listings</h2>
+    {% for auctionList in auctionLists %}
+    <div class="list-group mb-5"> <!-- Added "mb-3" class for margin-bottom -->
+        <h3 class="list-group-item list-group-item-action active"><b>Product:</b> {{auctionList.productName}}</h3>
+        <p class="list-group-item list-group-item-action"><b>Price:</b> {{ auctionList.initialPrice }}</p>
+        <p class="list-group-item list-group-item-action"><b>Listed By:</b> {{auctionList.seller}} at {{ auctionList.creationTime }}</p>
+    </div>
+    {%empty%}
+        <p>No active listings.</p>
+    {% endfor %}
+
+{% endblock %}
