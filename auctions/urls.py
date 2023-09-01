@@ -12,7 +12,9 @@ urlpatterns = [
     path("register", views.register, name="register"),
 
     path("createListing", views.createListing, name="createListing"),
+    path("productPage", views.productPage, name="productPage"),
 ]
 
-if settings.DEBUG:
+if settings.DEBUG: #routing for media (BASE_DIR/media)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+  

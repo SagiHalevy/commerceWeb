@@ -44,7 +44,8 @@ def createListing(request):
 
 
 
-
+def productPage():
+    return render(request, "auctions/productPage.html")
 
 
 

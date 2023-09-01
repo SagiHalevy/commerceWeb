@@ -5,15 +5,16 @@
     <h2>Active Listings</h2>
     {% for auctionList in auctionLists %}
     <div class="auctionProduct">
-        <h3><b>Product:</b> {{auctionList.productName}} </h3>
-        <small><b>Price</b> {{ auctionList.initialPrice }}</small> <br>
-        <small><b>Listed By:</b> {{auctionList.seller}} at {{ auctionList.creationTime }}</small>
-
-        {% if auctionList.image %}
-            <img src="{{ auctionList.image.url }}" alt="{{ auctionList.productName }}" style="max-width: 200px;">
-        {% endif %}
-
-        <br><br><br>
+        <div class="product_text">
+            <h3><b> {{auctionList.productName}} </b></h3>
+            <small><b>Price</b> {{ auctionList.initialPrice }}$</small> <br>
+            <small><b>Listed By:</b> {{auctionList.seller}} at {{ auctionList.creationTime }}</small>
+        </div>
+        <div class="productImg">
+            {% if auctionList.image %}
+                <img src="{{ auctionList.image.url }}" alt="{{ auctionList.productName }}" style="max-width: 200px;">
+            {% endif %}
+        </div> 
     </div>
     {%empty%}
         <p>No active listings.</p>
