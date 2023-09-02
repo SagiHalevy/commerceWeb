@@ -14,7 +14,7 @@ urlpatterns = [
     path("createListing", views.createListing, name="createListing"),
     path("productPage/<int:product_id>", views.productPage, name="productPage"),
     path("productPage/<int:product_id>/submitBid", views.submitBid, name="submitBid"),
-    path("productPage/<int:product_id>/addToWatchlist", views.addToWatchlist, name="addToWatchlist"),
+    path("productPage/<int:product_id>/toggleWatchlist", views.toggleWatchlist, name="toggleWatchlist"),
 ]
 
 if settings.DEBUG: #routing for media (BASE_DIR/media)

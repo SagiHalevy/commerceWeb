@@ -47,12 +47,15 @@ def createListing(request):
 
 
 def productPage(request, product_id):
-    state_message = request.session.pop('state_message', None) #state message - whether bid successed/failed
     product = AuctionList.objects.get(pk=product_id)
+    state_message = request.session.pop('state_message', None) #state message - whether bid successed/failed
+    in_watchlist = request.user.watchlist.filter(pk=product.id).exists()
+
     return render(request, "auctions/productPage.html",{
         'product':product,
         'bidPrice': getCurrentPrice(product),
-        'state_message': state_message
+        'state_message': state_message,
+        'in_watchlist': in_watchlist,
     })
 
 @login_required
@@ -73,10 +76,23 @@ def submitBid(request, product_id):
         return HttpResponseRedirect(reverse("productPage",args=(product_id,)))
 
 
+@login_required
+def toggleWatchlist(request,product_id):
+    if request.method == 'POST':
+        user = request.user
+        product = AuctionList.objects.get(pk=product_id)   
+        action = request.POST.get('action', None)
 
+        if action == 'addToWatchlist':
+            if user not in product.watchlist.all():
+                product.watchlist.add(user)
+        elif action == 'removeFromWatchlist':
+            if user in product.watchlist.all():
+                product.watchlist.remove(user)
 
-def addToWatchlist(request,product_id):
-    pass
+        return HttpResponseRedirect(reverse("productPage",args=(product_id,)))
+     
+
 
 
 

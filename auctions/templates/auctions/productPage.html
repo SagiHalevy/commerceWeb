@@ -5,10 +5,15 @@
 <div class="productText productPage">
 
     {% if user.is_authenticated %}
-        <form method="post" action="{% url 'addToWatchlist' product.id %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary">Add to Watchlist</button>
+        <form method="post" action="{% url 'toggleWatchlist' product.id %}">
+        {% csrf_token %}
+        {% if in_watchlist %}
+            <button type="submit" name="action" value="removeFromWatchlist" class="btn btn-secondary">Remove from Watchlist</button>
+        {% else %}          
+            <button type="submit" name="action" value="addToWatchlist" class="btn btn-primary">Add to Watchlist</button>
+        {% endif %}
         </form>
+        
     {% else %}
         <p>You need to <a href="{% url 'login' %}">log in</a> to add this item to your watchlist.</p>
     {% endif %}

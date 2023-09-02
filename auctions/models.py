@@ -17,6 +17,7 @@ class AuctionList(models.Model):
     info = models.TextField(max_length=1000)
     creationTime = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to= user_directory_path, blank=True, null=True)
+    watchlist = models.ManyToManyField(User, blank=True, related_name = "watchlist")
 
 
 
@@ -27,7 +28,7 @@ class Bid(models.Model):
     lastBidTime = models.DateTimeField(auto_now=True)
 
 
-class Comments(models.Model):
+class Comment(models.Model):
     commenter = models.ForeignKey('User', on_delete=models.CASCADE)
     productName = models.ForeignKey('AuctionList', on_delete=models.CASCADE, related_name = "comments")
     creationTime = models.DateTimeField(auto_now_add=True)  
