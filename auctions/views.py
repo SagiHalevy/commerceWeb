@@ -4,9 +4,10 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
-
+from django.db.models import Max
+from django.contrib.auth.decorators import login_required
 from .models import *
-
+from .util import *
 
 class CreateListingForm(forms.Form):
     title = forms.CharField(label="Title:")
@@ -20,10 +21,13 @@ class CreateListingForm(forms.Form):
 
 def index(request):
     return render(request, "auctions/index.html",{
-        'auctionLists': AuctionList.objects.all()
+        # Adds to auctionLists extra field called 'highestBid' which equals to the Max() value of 
+        # bidPrice in the relative_name table for "bids"
+        'auctionLists': AuctionList.objects.annotate(highestBid = Max('bids__bidPrice'))
     })
 
 
+@login_required
 def createListing(request):
     if request.method == 'POST':
         form = CreateListingForm(request.POST, request.FILES)
@@ -42,10 +46,38 @@ def createListing(request):
     })
 
 
+def productPage(request, product_id):
+    state_message = request.session.pop('state_message', None) #state message - whether bid successed/failed
+    product = AuctionList.objects.get(pk=product_id)
+    return render(request, "auctions/productPage.html",{
+        'product':product,
+        'bidPrice': getCurrentPrice(product),
+        'state_message': state_message
+    })
+
+@login_required
+def submitBid(request, product_id):
+    if request.method == 'POST':
+        product = AuctionList.objects.get(pk=product_id)
+        userBidAmount = float(request.POST['bidAmount'])
+        highestPrice = getCurrentPrice(product) #highestPrice is the initialPrice, or the highest bid price (if exist)
+        
+        if userBidAmount > highestPrice:
+            bid = Bid(bidder=request.user, productName=product, bidPrice=userBidAmount)
+            bid.save()
+            state_message = {'message':f"Success: Your bid of {userBidAmount}$ has been added to the auction.", 'accepted':True}
+        else:
+            state_message = {'message':f"ERROR: Your bid is too low! The highest bid at the moment is: {highestPrice}$", 'accepted':False}
+                 
+        request.session['state_message'] = state_message
+        return HttpResponseRedirect(reverse("productPage",args=(product_id,)))
 
 
-def productPage():
-    return render(request, "auctions/productPage.html")
+
+
+def addToWatchlist(request,product_id):
+    pass
+
 
 
 

@@ -2,7 +2,51 @@
 
 {% block body %}
 
+<div class="productText productPage">
+
+    {% if user.is_authenticated %}
+        <form method="post" action="{% url 'addToWatchlist' product.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Add to Watchlist</button>
+        </form>
+    {% else %}
+        <p>You need to <a href="{% url 'login' %}">log in</a> to add this item to your watchlist.</p>
+    {% endif %}
 
 
+    <h1><b> {{product.productName}} </b></h1>
+    <small><b>Initial Price:</b> {{ product.initialPrice }}$</small> <br>
+    <small>
+        <b>Highest Bid:</b>
+        {% if bidPrice > product.initialPrice %}
+            {{ bidPrice }}$
+        {% else %}
+             There aren't any bids   
+        {% endif %}
+    </small><br>
+    <small><b>Listed By:</b> {{product.seller}} at {{ product.creationTime }}</small> <br>
+    <small><b>Description:</b> {{product.info}}</small>
+</div>
+
+
+<div class="productImg">
+    {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.productName }}" style="max-width: 200px;">
+    {% endif %}
+</div> <br>
+         
+
+<form method="post" action="{% url 'submitBid' product.id %}">
+    {% csrf_token %}
+    <label for="bidAmount">Bid Amount:</label>
+    <input type="number" step="0.01" id="bidAmount" name="bidAmount" min="0" required>
+    <input type="submit" value="Submit Bid">
+</form>
+
+{% if state_message %}
+    <div class="alert {% if state_message.accepted %}alert alert-success{% else %}alert alert-danger{% endif %}" role="alert">
+        {{ state_message.message }}
+    </div>
+{% endif %}
 
 {% endblock %}

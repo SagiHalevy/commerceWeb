@@ -4,18 +4,26 @@
 
     <h2>Active Listings</h2>
     {% for auctionList in auctionLists %}
-    <div class="auctionProduct">
-        <div class="product_text">
-            <h3><b> {{auctionList.productName}} </b></h3>
-            <small><b>Price</b> {{ auctionList.initialPrice }}$</small> <br>
-            <small><b>Listed By:</b> {{auctionList.seller}} at {{ auctionList.creationTime }}</small>
+    <a href="{% url 'productPage' auctionList.id%}" class="auctionProductLink">
+        <div class="auctionProduct">
+            <div class="productText">
+                <h3><b> {{auctionList.productName}} </b></h3>
+
+                {% if auctionList.highestBid %}
+                    <small><b>Current Price:</b> {{ auctionList.highestBid|floatformat:2  }}$</small> <br>
+                {% else %}
+                    <small><b>Current Price:</b> No bids yet</small><br>
+                {% endif %}
+
+                <small><b>Listed By:</b> {{auctionList.seller}} at {{ auctionList.creationTime }}</small>
+            </div>
+            <div class="productImg">
+                {% if auctionList.image %}
+                    <img src="{{ auctionList.image.url }}" alt="{{ auctionList.productName }}" style="max-width: 200px;">
+                {% endif %}
+            </div> 
         </div>
-        <div class="productImg">
-            {% if auctionList.image %}
-                <img src="{{ auctionList.image.url }}" alt="{{ auctionList.productName }}" style="max-width: 200px;">
-            {% endif %}
-        </div> 
-    </div>
+    </a>
     {%empty%}
         <p>No active listings.</p>
     {% endfor %}
