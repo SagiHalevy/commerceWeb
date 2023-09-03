@@ -5,26 +5,41 @@
 <div class="productText productPage">
 
     {% if user.is_authenticated %}
-        <form method="post" action="{% url 'toggleWatchlist' product.id %}">
-        {% csrf_token %}
-        {% if in_watchlist %}
-            <button type="submit" name="action" value="removeFromWatchlist" class="btn btn-secondary">Remove from Watchlist</button>
-        {% else %}          
-            <button type="submit" name="action" value="addToWatchlist" class="btn btn-primary">Add to Watchlist</button>
+        {% if user != product.seller %}
+            <form method="post" action="{% url 'toggleWatchlist' product.id %}">
+            {% csrf_token %}
+            <div class="watchlistBtns"> 
+                {% if in_watchlist %}
+                    <button type="submit" name="action" value="removeFromWatchlist" class="btn btn-secondary">Remove from Watchlist</button>
+                {% else %}          
+                    <button type="submit" name="action" value="addToWatchlist" class="btn btn-primary">Add to Watchlist</button>
+                {% endif %}
+            </div>
+            </form>    
+        {% else %}
+        <div class="alert alert-primary" role="alert" style="display: inline-block;"> This is your product</div>
         {% endif %}
-        </form>
-        
     {% else %}
         <p>You need to <a href="{% url 'login' %}">log in</a> to add this item to your watchlist.</p>
     {% endif %}
 
 
+    {% if is_a_bidder %}
+        <div class="alert alert-info" role="alert" style="display: inline-block;" >You are a participant in this auction, your bid: {{userBid}}$</div>
+    {% endif %}
     <h1><b> {{product.productName}} </b></h1>
     <small><b>Initial Price:</b> {{ product.initialPrice }}$</small> <br>
     <small>
         <b>Highest Bid:</b>
         {% if bidPrice > product.initialPrice %}
             {{ bidPrice }}$
+            {% if user == highestBidder %}
+            <span class="badge badge-success">Your bid</span>
+            {% else %}
+                {% if is_a_bidder %}
+                    <span class="badge badge-warning">You have been outbid in the auction.</span>
+                {% endif %}
+            {% endif %}
         {% else %}
              There aren't any bids   
         {% endif %}
@@ -39,14 +54,19 @@
         <img src="{{ product.image.url }}" alt="{{ product.productName }}" style="max-width: 200px;">
     {% endif %}
 </div> <br>
-         
+{% if user.is_authenticated %}
+    {% if user != product.seller %}
+        <form method="post" action="{% url 'submitBid' product.id %}">
+            {% csrf_token %}
+            <label for="bidAmount">Bid Amount:</label>
+            <input type="number" step="0.01" id="bidAmount" name="bidAmount" min="0" required>
+            <input type="submit" value="Submit Bid">
+        </form>
+    {% endif %}
+{% else %}
+    <p>You need to <a href="{% url 'login' %}">log in</a> to set a bid.</p>
+{% endif %}
 
-<form method="post" action="{% url 'submitBid' product.id %}">
-    {% csrf_token %}
-    <label for="bidAmount">Bid Amount:</label>
-    <input type="number" step="0.01" id="bidAmount" name="bidAmount" min="0" required>
-    <input type="submit" value="Submit Bid">
-</form>
 
 {% if state_message %}
     <div class="alert {% if state_message.accepted %}alert alert-success{% else %}alert alert-danger{% endif %}" role="alert">

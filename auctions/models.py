@@ -18,14 +18,23 @@ class AuctionList(models.Model):
     creationTime = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to= user_directory_path, blank=True, null=True)
     watchlist = models.ManyToManyField(User, blank=True, related_name = "watchlist")
-
+    # Define choices for the auction status
+    AUCTION_STATUS_CHOICES = (
+        ('active', 'Active'),
+        ('closed', 'Closed')
+    )
+    status = models.CharField(
+        max_length=10,
+        choices=AUCTION_STATUS_CHOICES,
+        default='active'  # Set the default status to 'active' when an auction is created.
+    )
 
 
 class Bid(models.Model):
     bidder = models.ForeignKey('User', on_delete=models.CASCADE)
     productName = models.ForeignKey('AuctionList', on_delete=models.CASCADE, related_name = "bids")
     bidPrice = models.DecimalField(max_digits=30, decimal_places=2)
-    lastBidTime = models.DateTimeField(auto_now=True)
+    lastBidTime = models.DateTimeField(auto_now_add=True)
 
 
 class Comment(models.Model):
