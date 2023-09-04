@@ -44,3 +44,8 @@ class Comment(models.Model):
     comment = models.TextField(max_length=500)
 
 
+class Notification(models.Model):
+    user = models.ForeignKey('User', on_delete=models.CASCADE, related_name = "notifications")
+    product = models.ForeignKey('AuctionList', on_delete=models.CASCADE)
+    notificationTime = models.DateTimeField(auto_now_add=True)    
+    is_read = models.BooleanField(default=False)

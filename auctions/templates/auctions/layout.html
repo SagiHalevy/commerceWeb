@@ -25,7 +25,7 @@
                     <a class="nav-link" href="{% url 'createListing' %}">Create Listing</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'watchlist' %}">Watchlist</a>
+                    <a class="nav-link" href="{% url 'watchlist' %}">Watchlist{% if notification_count >= 0 %} <span class="badge bg-secondary" style="color: white">{{ notification_count }} </span>{% endif %}</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Log Out</a>

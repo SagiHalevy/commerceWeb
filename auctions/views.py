@@ -64,6 +64,13 @@ def productPage(request, product_id):
     in_watchlist = is_authenticated and request.user.watchlist.filter(pk=product.id).exists()   
     is_a_bidder = is_authenticated and allProductBids.filter(bidder=request.user).exists()
     userBid = is_authenticated and (allProductBids.filter(bidder=request.user).order_by("-bidPrice")[0].bidPrice) if is_a_bidder else None
+    
+    if is_authenticated:
+        notificationOfProduct = request.user.notifications.filter(product=product, is_read=False).first()
+        if notificationOfProduct:
+            notificationOfProduct.is_read = True
+            notificationOfProduct.save()
+
 
     return render(request, "auctions/productPage.html",{
         'product':product,
@@ -125,10 +132,15 @@ def toggleWatchlist(request,product_id):
 
 @login_required
 def watchlist(request):
+    newNotifications = request.user.notifications.filter(is_read=False)
+    newNotificatedProductsIds = list(newNotifications.values_list('product__id', flat=True))
+    print(newNotificatedProductsIds)
     watchlist = request.user.watchlist.all()
     return render(request,"auctions/watchlist.html",{
-        "watchlist":watchlist
+        "watchlist":watchlist,
+        "newNotificatedProductsIds":newNotificatedProductsIds
     })
+
 
 
 @login_required
@@ -140,7 +152,15 @@ def closeBid(request, product_id):
             auction.status = 'closed'
             auction.save()
 
+        #create notifications for watchlist's users
+        for user in auction.watchlist.all():
+            Notification.objects.create(user=user, product=auction)
+                   
+
     return HttpResponseRedirect(reverse("productPage",args=(product_id,)))
+
+
+
 
 
 @login_required

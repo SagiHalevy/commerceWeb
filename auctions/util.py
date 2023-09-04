@@ -6,3 +6,4 @@ def getCurrentPrice(product):
         return highestBid
     return product.initialPrice
 
+
