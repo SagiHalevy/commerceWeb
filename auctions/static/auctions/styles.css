@@ -17,7 +17,7 @@ body {
     
   }
 
-  a.auctionProductLink{
+a.auctionProductLink{
     text-decoration: none;
 }
 
@@ -29,4 +29,9 @@ body {
 
 .watchlistBtns{
     margin-bottom: 10px;
+}
+
+
+.status{
+    color: rgb(158, 33, 33) !important;
 }

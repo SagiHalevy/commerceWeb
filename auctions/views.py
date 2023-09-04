@@ -66,6 +66,7 @@ def productPage(request, product_id):
         'highestBidder':highestBidder,
         'is_a_bidder':is_a_bidder,
         'userBid':userBid,
+        'status':product.status,
     })
 
 @login_required
@@ -121,6 +122,15 @@ def watchlist(request):
 
 
 
+def closeBid(request, product_id):
+    if request.method == 'POST':
+        auction = AuctionList.objects.get(pk=product_id)
+
+        if request.user == auction.seller:
+            auction.status = 'closed'
+            auction.save()
+
+    return HttpResponseRedirect(reverse("productPage",args=(product_id,)))
 
 
 

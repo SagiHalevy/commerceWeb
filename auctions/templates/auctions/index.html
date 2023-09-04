@@ -3,16 +3,26 @@
 {% block body %}
 
     <h2>Active Listings</h2>
+
+    
     {% for auctionList in auctionLists %}
     <a href="{% url 'productPage' auctionList.id%}" class="auctionProductLink">
         <div class="auctionProduct">
             <div class="productText">
-                <h3><b> {{auctionList.productName}} </b></h3>
+                <h3><b> {{auctionList.productName}} <span class="status">{% if auctionList.status == 'closed' %} (CLOSED) {% endif %} </span> </b></h3>
 
                 {% if auctionList.highestBid %}
-                    <small><b>Current Price:</b> {{ auctionList.highestBid|floatformat:2  }}$</small> <br>
+                    {% if auctionList.status == 'active' %}
+                        <small><b>Current Price:</b> {{ auctionList.highestBid|floatformat:2  }}$</small> <br>
+                    {% else %}
+                        <small><b>Winning Bid:</b> {{ auctionList.highestBid|floatformat:2  }}$</small> <br>
+                    {% endif %}
                 {% else %}
-                    <small><b>Current Price:</b> No bids yet</small><br>
+                    {% if auctionList.status == 'active' %} 
+                        <small><b>Current Price:</b> No bids yet</small><br>
+                    {% else %}
+                        <small><b>Winning Bid:</b> No bids were placed </small><br>   
+                    {% endif %}
                 {% endif %}
 
                 <small><b>Listed By:</b> {{auctionList.seller}} at {{ auctionList.creationTime }}</small>
