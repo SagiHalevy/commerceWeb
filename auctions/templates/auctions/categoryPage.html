@@ -3,16 +3,23 @@
 {% block body %}
 
     {% for product in productsInCategory %}
-    <div>
         <a href="{% url 'productPage' product.id%}" class="auctionProductLink">
             <div class="auctionProduct">
                 <div class="productText">
-                    <h3><b> {{product.productName}} </b> {% if product.id in newNotificatedProductsIds %}<span class="badge bg-secondary" style="color:white">New</span> {% endif %}</h3>
+                    <h3><b> {{product.productName}} <span class="status">{% if product.status == 'closed' %} (CLOSED) {% endif %} </span> </b></h3>
 
                     {% if product.highestBid %}
-                        <small><b>Current Price:</b> {{ product.highestBid|floatformat:2  }}$</small> <br>
+                        {% if product.status == 'active' %}
+                            <small><b>Current Price:</b> {{ product.highestBid|floatformat:2  }}$</small> <br>
+                        {% else %}
+                            <small><b>Winning Bid:</b> {{ product.highestBid|floatformat:2  }}$</small> <br>
+                        {% endif %}
                     {% else %}
-                        <small><b>Current Price:</b> No bids yet</small><br>
+                        {% if product.status == 'active' %} 
+                            <small><b>Current Price:</b> No bids yet</small><br>
+                        {% else %}
+                            <small><b>Winning Bid:</b> No bids were placed </small><br>   
+                        {% endif %}
                     {% endif %}
 
                     <small><b>Listed By:</b> {{product.seller}} at {{ product.creationTime }}</small>
@@ -25,10 +32,8 @@
             </div>
         </a>
 
-    </div>
-
     {%empty%}
-        <p>No active listings for this category.</p>
+        <p>No active listings for this category</p>
     {% endfor %}
 
 

@@ -29,24 +29,10 @@ class AddCommentForm(forms.Form):
 
 
 def index(request):
-    # Get all unique categories and annotate them with the count of items per category
-    categories_with_counts = AuctionList.objects.values('category').annotate(category_count=Count('category'))
-
-    # Create a list of all possible categories with a count of 0 for those that don't exist in the database
-    all_categories = AuctionList.CATEGORY_CHOICES
-    all_categories_with_counts = [{'category': category[0], 'category_count': 0} for category in all_categories]
-
-    # Merge the two lists to include categories with 0 items
-    merged_categories = {category['category']: category for category in all_categories_with_counts}
-    for category in categories_with_counts:
-        merged_categories[category['category']] = category
-
-    # Sort the merged categories alphabetically
-    sorted_categories = sorted(merged_categories.values(), key=lambda x: x['category'])
-
+    
     return render(request, "auctions/index.html", {
         'auctionLists': AuctionList.objects.annotate(highestBid=Max('bids__bidPrice')).order_by('creationTime'),
-        'categories_with_counts': sorted_categories,
+        'categories_with_counts': getCategoriesWithCount(),
     })
 
 
@@ -82,6 +68,7 @@ def productPage(request, product_id):
     is_a_bidder = is_authenticated and allProductBids.filter(bidder=request.user).exists()
     userBid = is_authenticated and (allProductBids.filter(bidder=request.user).order_by("-bidPrice")[0].bidPrice) if is_a_bidder else None
     
+    #Mark notification as read if this item got notificated
     if is_authenticated:
         notificationOfProduct = request.user.notifications.filter(product=product, is_read=False).first()
         if notificationOfProduct:

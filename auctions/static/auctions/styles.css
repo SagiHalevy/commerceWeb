@@ -105,9 +105,15 @@ a.auctionProductLink{
     list-style: none;
     padding: 0;
     display: flex;
-    flex-direction: row; /* Display items horizontally */
+    flex-wrap: wrap;
+    gap:10px;
 }
 
 .horizontalCategories li {
     margin-right: 10px; /* Add spacing between categories */
+   
+}
+
+.horizontalCategories li a {
+    text-decoration: none; /* Remove underlines from links */
 }

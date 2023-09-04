@@ -109,6 +109,9 @@
             {% for comment in product.comments.all %}
                 <li class="commentItem">
                     <div class="commentHeader">
+                        {% if comment.commenter == user %} <b style="color: rgb(40, 151, 49);"> (You) </b> 
+                        {% elif comment.commenter == product.seller %} <b style="color: rgb(27, 113, 170);"> (Auction Owner) </b> 
+                        {% endif %}
                         <strong class="commenterName">{{ comment.commenter }}</strong>
                         <small class="commentTime">{{ comment.creationTime }}</small>
                     </div>
