@@ -20,6 +20,13 @@ class CreateListingForm(forms.Form):
     image = forms.ImageField(label="Upload Image:", required=False)
 
 
+class AddCommentForm(forms.Form):
+    comment = forms.CharField(
+        label=False,
+        widget=forms.Textarea(attrs={'rows': 7, 'cols':80, 'placeholder': 'Add comment here...'})
+    )
+
+
 def index(request):
     return render(request, "auctions/index.html",{
         # Adds to auctionLists extra field called 'highestBid' which equals to the Max() value of 
@@ -67,7 +74,10 @@ def productPage(request, product_id):
         'is_a_bidder':is_a_bidder,
         'userBid':userBid,
         'status':product.status,
+        'commentForm':AddCommentForm()
     })
+
+
 
 @login_required
 def submitBid(request, product_id):
@@ -121,7 +131,7 @@ def watchlist(request):
     })
 
 
-
+@login_required
 def closeBid(request, product_id):
     if request.method == 'POST':
         auction = AuctionList.objects.get(pk=product_id)
@@ -132,6 +142,19 @@ def closeBid(request, product_id):
 
     return HttpResponseRedirect(reverse("productPage",args=(product_id,)))
 
+
+@login_required
+def addComment(request, product_id):
+    if request.method == 'POST':
+        form = AddCommentForm(request.POST)
+        if form.is_valid():
+            product = get_object_or_404(AuctionList, pk=product_id)
+            commenter = request.user
+            commentContent = form.cleaned_data['comment']
+          
+            newComment = Comment(commenter=commenter, productName=product, comment=commentContent)
+            newComment.save()
+            return HttpResponseRedirect(reverse("productPage",args=(product_id,)))
 
 
 

@@ -42,3 +42,5 @@ class Comment(models.Model):
     productName = models.ForeignKey('AuctionList', on_delete=models.CASCADE, related_name = "comments")
     creationTime = models.DateTimeField(auto_now_add=True)  
     comment = models.TextField(max_length=500)
+
+

@@ -19,7 +19,7 @@
             {% if user == product.seller %}
                 <form method="post" action="{% url 'closeBid' product.id %}">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Close Bid</button>
+                    <button type="submit" class="btn btn-danger closeBidBtn">Close Bid</button>
                 </form>
             {% endif %}
         {% endif %}
@@ -68,30 +68,68 @@
         <small><b>Description:</b> {{product.info}}</small>
     </div>
     
+
+
     {% endif %} <!-- UNTIL HERE IF PRODUCT STATUS IS ACTIVE -->
 <div class="productImg">
     {% if product.image %}
         <img src="{{ product.image.url }}" alt="{{ product.productName }}" style="max-width: 200px;">
     {% endif %}
 </div> <br>
-{% if user.is_authenticated %}
-    {% if user != product.seller %}
-        <form method="post" action="{% url 'submitBid' product.id %}">
-            {% csrf_token %}
-            <label for="bidAmount">Bid Amount:</label>
-            <input type="number" step="0.01" id="bidAmount" name="bidAmount" min="0" required>
-            <input type="submit" value="Submit Bid">
-        </form>
+
+
+
+
+{% if product.status == 'active' %}
+
+    {% if user.is_authenticated %}
+        {% if user != product.seller %}
+            <form method="post" action="{% url 'submitBid' product.id %}">
+                {% csrf_token %}
+                <label for="bidAmount">Bid Amount:</label>
+                <input type="number" step="0.01" id="bidAmount" name="bidAmount" min="0" required>
+                <input type="submit" value="Submit Bid">
+            </form>
+        {% endif %}
+    {% else %}
+        <p>You need to <a href="{% url 'login' %}">log in</a> to set a bid.</p>
     {% endif %}
-{% else %}
-    <p>You need to <a href="{% url 'login' %}">log in</a> to set a bid.</p>
+
+
+    {% if state_message %}
+        <div class="alert {% if state_message.accepted %}alert alert-success{% else %}alert alert-danger{% endif %}" role="alert">
+            {{ state_message.message }}
+        </div>
+    {% endif %}
+
+
+    <div class="commentSection">
+        <h3>Comments</h3>
+        <ul class="commentList">
+            {% for comment in product.comments.all %}
+                <li class="commentItem">
+                    <div class="commentHeader">
+                        <strong class="commenterName">{{ comment.commenter }}</strong>
+                        <small class="commentTime">{{ comment.creationTime }}</small>
+                    </div>
+                    <div class="commentContent">{{ comment.comment }}</div>
+                </li>
+            {% empty %}
+                <li class="noComments">No comments yet.</li>
+            {% endfor %}
+        </ul>
+
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'addComment' product.id %}">
+                {% csrf_token %}
+                {{ commentForm.as_p }}
+                <button type="submit" class="btn btn-primary">Submit Comment</button>
+            </form>
+            {% else %}
+                <p>You need to <a href="{% url 'login' %}">log in</a> to submit a comment.</p>
+        {% endif %}
+</div>
+
+
 {% endif %}
-
-
-{% if state_message %}
-    <div class="alert {% if state_message.accepted %}alert alert-success{% else %}alert alert-danger{% endif %}" role="alert">
-        {{ state_message.message }}
-    </div>
-{% endif %}
-
 {% endblock %}
