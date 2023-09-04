@@ -1,0 +1,37 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    {% for product in productsInCategory %}
+    <div>
+        <a href="{% url 'productPage' product.id%}" class="auctionProductLink">
+            <div class="auctionProduct">
+                <div class="productText">
+                    <h3><b> {{product.productName}} </b> {% if product.id in newNotificatedProductsIds %}<span class="badge bg-secondary" style="color:white">New</span> {% endif %}</h3>
+
+                    {% if product.highestBid %}
+                        <small><b>Current Price:</b> {{ product.highestBid|floatformat:2  }}$</small> <br>
+                    {% else %}
+                        <small><b>Current Price:</b> No bids yet</small><br>
+                    {% endif %}
+
+                    <small><b>Listed By:</b> {{product.seller}} at {{ product.creationTime }}</small>
+                </div>
+                <div class="productImg">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.productName }}" style="max-width: 200px;">
+                    {% endif %}
+                </div> 
+            </div>
+        </a>
+
+    </div>
+
+    {%empty%}
+        <p>No active listings for this category.</p>
+    {% endfor %}
+
+
+
+
+{% endblock %}

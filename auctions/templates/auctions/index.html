@@ -2,9 +2,19 @@
 
 {% block body %}
 
+    
+    <h2>Categories</h2>
+    <ul class="horizontalCategories">
+        {% for category in categories_with_counts %}
+           
+        <li><a href="{% url 'categoryPage' category.category %}">{{ category.category }} ({{ category.category_count }} items) </a></li>
+
+        {% endfor %}
+    </ul>
+
+
     <h2>Active Listings</h2>
 
-    
     {% for auctionList in auctionLists %}
     <a href="{% url 'productPage' auctionList.id%}" class="auctionProductLink">
         <div class="auctionProduct">

@@ -100,3 +100,14 @@ a.auctionProductLink{
     background-color: #0056b3;
 }
 
+
+.horizontalCategories {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: row; /* Display items horizontally */
+}
+
+.horizontalCategories li {
+    margin-right: 10px; /* Add spacing between categories */
+}

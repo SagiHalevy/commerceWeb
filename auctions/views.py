@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django import forms
-from django.db.models import Max
+from django.db.models import Max, Count
 from django.contrib.auth.decorators import login_required
 from .decorators import redirect_authenticated_user
 from .models import *
@@ -18,6 +18,7 @@ class CreateListingForm(forms.Form):
     )
     price = forms.DecimalField(label="Starting Price:",min_value=0,  max_digits=30, decimal_places=2)
     image = forms.ImageField(label="Upload Image:", required=False)
+    category = forms.ChoiceField(label="Category:", choices=AuctionList.CATEGORY_CHOICES)
 
 
 class AddCommentForm(forms.Form):
@@ -28,10 +29,24 @@ class AddCommentForm(forms.Form):
 
 
 def index(request):
-    return render(request, "auctions/index.html",{
-        # Adds to auctionLists extra field called 'highestBid' which equals to the Max() value of 
-        # bidPrice in the relative_name table for "bids"
-        'auctionLists': AuctionList.objects.annotate(highestBid = Max('bids__bidPrice')).order_by('creationTime')
+    # Get all unique categories and annotate them with the count of items per category
+    categories_with_counts = AuctionList.objects.values('category').annotate(category_count=Count('category'))
+
+    # Create a list of all possible categories with a count of 0 for those that don't exist in the database
+    all_categories = AuctionList.CATEGORY_CHOICES
+    all_categories_with_counts = [{'category': category[0], 'category_count': 0} for category in all_categories]
+
+    # Merge the two lists to include categories with 0 items
+    merged_categories = {category['category']: category for category in all_categories_with_counts}
+    for category in categories_with_counts:
+        merged_categories[category['category']] = category
+
+    # Sort the merged categories alphabetically
+    sorted_categories = sorted(merged_categories.values(), key=lambda x: x['category'])
+
+    return render(request, "auctions/index.html", {
+        'auctionLists': AuctionList.objects.annotate(highestBid=Max('bids__bidPrice')).order_by('creationTime'),
+        'categories_with_counts': sorted_categories,
     })
 
 
@@ -41,11 +56,13 @@ def createListing(request):
         form = CreateListingForm(request.POST, request.FILES)
         if form.is_valid():
             title = form.cleaned_data['title']
+            category = form.cleaned_data['category']
             description = form.cleaned_data['info']
             price = form.cleaned_data['price']
             image = form.cleaned_data['image']
             auctionList = AuctionList(seller=request.user ,productName=title,
-                                      initialPrice=price, info=description, image=image)
+                                      initialPrice=price, info=description,
+                                      image=image , category=category)
             auctionList.save()
             return HttpResponseRedirect(reverse("index"))
 
@@ -134,7 +151,6 @@ def toggleWatchlist(request,product_id):
 def watchlist(request):
     newNotifications = request.user.notifications.filter(is_read=False)
     newNotificatedProductsIds = list(newNotifications.values_list('product__id', flat=True))
-    print(newNotificatedProductsIds)
     watchlist = request.user.watchlist.all()
     return render(request,"auctions/watchlist.html",{
         "watchlist":watchlist,
@@ -161,8 +177,6 @@ def closeBid(request, product_id):
 
 
 
-
-
 @login_required
 def addComment(request, product_id):
     if request.method == 'POST':
@@ -175,6 +189,17 @@ def addComment(request, product_id):
             newComment = Comment(commenter=commenter, productName=product, comment=commentContent)
             newComment.save()
             return HttpResponseRedirect(reverse("productPage",args=(product_id,)))
+
+
+
+
+def categoryPage(request,category):
+    productsInCategory = AuctionList.objects.filter(category=category)
+    return render(request,"auctions/categoryPage.html",{
+        "productsInCategory":productsInCategory,
+    })
+
+
 
 
 
