@@ -4,4 +4,5 @@ This is a Django-based auction site project that allows users to register and cr
 
 ![productpage](https://github.com/SagiHalevy/commerceWeb/assets/92096601/443e427c-c3c6-4fa4-8f7b-fdcda5ae0576)
 
-![newitem](https://github.com/SagiHalevy/commerceWeb/assets/92096601/b35e76ff-1e78-4d5e-9c1e-a0d73f5a4922)
+![newitem](https://github.com/SagiHalevy/commerceWeb/assets/92096601/58e2445e-991f-42b6-9275-9c45162ac2d7)
+
