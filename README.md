@@ -1,8 +1,5 @@
 # Django Auction Site
 This is a Django-based auction site project that allows users to register and create listings, bid on items, add items to their watchlist, comment on listings, notifications and more.  
-![activelisting](https://github.com/SagiHalevy/commerceWeb/assets/92096601/2d119de6-6c92-4e44-a303-d27ca6ee8716)
+![productpage](https://github.com/SagiHalevy/commerceWeb/assets/92096601/d216edf1-5057-46bc-aedc-fce1951a5911)
 
-![productpage](https://github.com/SagiHalevy/commerceWeb/assets/92096601/443e427c-c3c6-4fa4-8f7b-fdcda5ae0576)
-
-![newitem](https://github.com/SagiHalevy/commerceWeb/assets/92096601/58e2445e-991f-42b6-9275-9c45162ac2d7)
-
+![activelisting](https://github.com/SagiHalevy/commerceWeb/assets/92096601/1f1e54df-27e0-4216-87a7-c6e0e7f06de7)
